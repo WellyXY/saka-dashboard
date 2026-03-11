@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yiumo Creator Dashboard</title>
+    <title>Yiumo Creator Studio</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -12,74 +12,157 @@
             min-height: 100vh;
             color: #fff;
         }
-        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
-        /* Header */
-        .header {
+        /* Layout */
+        .app {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: #111;
+            border-right: 1px solid #222;
+            padding: 20px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .logo {
+            padding: 0 20px 24px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            border-bottom: 1px solid #222;
+            margin-bottom: 16px;
+        }
+        .logo span { color: #ff6b9d; }
+        .nav-section {
+            padding: 0 12px;
+            margin-bottom: 24px;
+        }
+        .nav-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 8px;
+            margin-bottom: 8px;
+        }
+        .nav-item {
             display: flex;
             align-items: center;
-            gap: 24px;
-            padding: 32px;
-            background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
-            border-radius: 20px;
-            margin-bottom: 24px;
-            border: 1px solid #222;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #888;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
         }
-        .avatar {
-            width: 120px;
-            height: 120px;
+        .nav-item:hover { background: #1a1a1a; color: #fff; }
+        .nav-item.active { background: linear-gradient(90deg, #ff6b9d22, #ff6b9d11); color: #ff6b9d; }
+        .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+        .nav-item .badge {
+            margin-left: auto;
+            background: #ff6b9d;
+            color: #fff;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            margin-left: 240px;
+            padding: 24px;
+        }
+
+        /* Creator Card */
+        .creator-card {
+            background: linear-gradient(135deg, #1a1a1a 0%, #111 100%);
+            border: 1px solid #222;
+            border-radius: 20px;
+            padding: 28px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 24px;
+        }
+        .creator-avatar {
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             border: 3px solid #ff6b9d;
             object-fit: cover;
         }
-        .profile-info h1 {
-            font-size: 28px;
-            font-weight: 600;
+        .creator-info { flex: 1; }
+        .creator-name {
+            font-size: 24px;
+            font-weight: 700;
             margin-bottom: 4px;
         }
-        .profile-info .username {
+        .creator-handle {
             color: #888;
-            font-size: 16px;
+            font-size: 14px;
             margin-bottom: 8px;
         }
-        .profile-info .bio {
+        .creator-bio {
             color: #aaa;
             font-size: 14px;
+            margin-bottom: 16px;
         }
-
-        /* Stats Row */
-        .stats-row {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 32px;
+        .creator-stats {
+            display: flex;
+            gap: 32px;
         }
-        .stat-card {
-            background: #141414;
-            border: 1px solid #222;
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .stat-card:hover {
-            transform: translateY(-2px);
-            border-color: #ff6b9d;
-        }
-        .stat-card .value {
-            font-size: 36px;
+        .creator-stat .value {
+            font-size: 24px;
             font-weight: 700;
-            color: #fff;
-            margin-bottom: 4px;
         }
-        .stat-card .label {
-            font-size: 13px;
+        .creator-stat .label {
+            font-size: 12px;
+            color: #666;
+        }
+        .creator-stat .trend {
+            font-size: 12px;
+            color: #4ade80;
+            margin-left: 6px;
+        }
+        .creator-stat .trend.down { color: #f87171; }
+
+        /* Growth Cards */
+        .growth-cards {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
+        }
+        .growth-card {
+            background: #0d0d0d;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 16px 20px;
+            min-width: 140px;
+        }
+        .growth-card .title {
+            font-size: 11px;
             color: #666;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        .growth-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #4ade80;
+        }
+        .growth-card .period {
+            font-size: 11px;
+            color: #555;
+            margin-top: 4px;
         }
 
-        /* Section */
+        /* Section Header */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -87,27 +170,45 @@
             margin-bottom: 20px;
         }
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            color: #fff;
         }
         .section-subtitle {
             font-size: 13px;
             color: #666;
+            margin-top: 4px;
+        }
+        .last-updated {
+            font-size: 12px;
+            color: #555;
+        }
+        .last-updated .dot {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: #4ade80;
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
         /* Posts Grid */
         .posts-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 16px;
         }
         .post-card {
             background: #141414;
             border: 1px solid #222;
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
             transition: transform 0.2s, border-color 0.2s;
+            cursor: pointer;
         }
         .post-card:hover {
             transform: translateY(-4px);
@@ -117,28 +218,25 @@
             width: 100%;
             aspect-ratio: 1;
             object-fit: cover;
-            cursor: pointer;
             background: #1a1a1a;
         }
-        .post-card .info {
-            padding: 16px;
-        }
-        .post-card .engagement {
+        .post-card .info { padding: 14px; }
+        .post-card .metrics {
             display: flex;
             gap: 16px;
             margin-bottom: 8px;
         }
-        .post-card .engagement span {
+        .post-card .metric {
             display: flex;
             align-items: center;
-            gap: 6px;
-            font-size: 14px;
+            gap: 5px;
+            font-size: 13px;
             color: #888;
         }
         .post-card .caption {
             font-size: 13px;
             color: #aaa;
-            line-height: 1.5;
+            line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
@@ -146,173 +244,403 @@
         }
         .post-card .type-badge {
             display: inline-block;
-            font-size: 11px;
+            font-size: 10px;
             padding: 3px 8px;
             background: rgba(255,107,157,0.15);
             color: #ff6b9d;
             border-radius: 4px;
             margin-bottom: 8px;
         }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.95);
-            z-index: 1000;
-            justify-content: center;
+        .post-card .external-link {
+            display: inline-flex;
             align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #555;
+            margin-top: 8px;
         }
-        .modal.active { display: flex; }
-        .modal img { max-width: 90%; max-height: 90%; border-radius: 12px; }
-        .modal-close {
-            position: absolute;
-            top: 20px; right: 30px;
-            font-size: 32px;
-            color: #fff;
+
+        /* Users List (Following/Followers) */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+        }
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #141414;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 14px;
             cursor: pointer;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            transition: all 0.2s;
         }
-        .modal-close:hover { opacity: 1; }
+        .user-card:hover {
+            border-color: #333;
+            background: #1a1a1a;
+        }
+        .user-card .avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .user-card .name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .user-card .handle {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* Inspiration Feed */
+        .inspiration-feed {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        .inspiration-card {
+            background: #141414;
+            border: 1px solid #222;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .inspiration-card:hover {
+            border-color: #333;
+            transform: translateY(-2px);
+        }
+        .inspiration-card .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border-bottom: 1px solid #222;
+        }
+        .inspiration-card .header .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+        }
+        .inspiration-card .header .name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .inspiration-card .header .time {
+            font-size: 11px;
+            color: #555;
+            margin-left: auto;
+        }
+        .inspiration-card .thumbnail {
+            width: 100%;
+            aspect-ratio: 9/16;
+            object-fit: cover;
+            max-height: 400px;
+        }
+        .inspiration-card .caption {
+            padding: 12px;
+            font-size: 13px;
+            color: #aaa;
+            line-height: 1.4;
+        }
+
+        /* Page Content */
+        .page { display: none; }
+        .page.active { display: block; }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .container { padding: 16px; }
-            .header { flex-direction: column; text-align: center; padding: 24px; }
-            .avatar { width: 100px; height: 100px; }
-            .stats-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .stat-card { padding: 16px; }
-            .stat-card .value { font-size: 28px; }
-            .posts-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .sidebar { display: none; }
+            .main { margin-left: 0; }
+            .creator-card { flex-direction: column; }
+            .growth-cards { margin-left: 0; margin-top: 16px; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <img src="images/profile.jpg" alt="Yiumo" class="avatar">
-            <div class="profile-info">
-                <h1>Yiumo (幼末)</h1>
-                <p class="username">@saka.yiumo</p>
-                <p class="bio">20 y 🇰🇷</p>
-            </div>
-        </header>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">Creator <span>Studio</span></div>
+            <nav class="nav-section">
+                <div class="nav-label">Content</div>
+                <div class="nav-item active" data-page="posts">
+                    <span class="icon">📸</span>
+                    Posts
+                    <span class="badge">30</span>
+                </div>
+                <div class="nav-item" data-page="followers">
+                    <span class="icon">👥</span>
+                    Followers
+                    <span class="badge">33</span>
+                </div>
+                <div class="nav-item" data-page="following">
+                    <span class="icon">➕</span>
+                    Following
+                    <span class="badge">30</span>
+                </div>
+            </nav>
+            <nav class="nav-section">
+                <div class="nav-label">Discover</div>
+                <div class="nav-item" data-page="inspiration">
+                    <span class="icon">✨</span>
+                    Inspiration
+                </div>
+            </nav>
+        </aside>
 
-        <!-- Stats -->
-        <div class="stats-row">
-            <div class="stat-card">
-                <div class="value">30</div>
-                <div class="label">Posts</div>
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Creator Card -->
+            <div class="creator-card">
+                <img src="images/profile.jpg" alt="Yiumo" class="creator-avatar">
+                <div class="creator-info">
+                    <h1 class="creator-name">Yiumo (幼末)</h1>
+                    <p class="creator-handle">@saka.yiumo</p>
+                    <p class="creator-bio">20 y 🇰🇷 • Dance & lifestyle content creator</p>
+                    <div class="creator-stats">
+                        <div class="creator-stat">
+                            <span class="value">30</span>
+                            <span class="label">Posts</span>
+                        </div>
+                        <div class="creator-stat">
+                            <span class="value">33</span>
+                            <span class="trend">+3</span>
+                            <span class="label">Followers</span>
+                        </div>
+                        <div class="creator-stat">
+                            <span class="value">1.2K</span>
+                            <span class="trend">+156</span>
+                            <span class="label">Views</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="growth-cards">
+                    <div class="growth-card">
+                        <div class="title">Follower Growth</div>
+                        <div class="value">+3</div>
+                        <div class="period">Last 7 days</div>
+                    </div>
+                    <div class="growth-card">
+                        <div class="title">Views Growth</div>
+                        <div class="value">+156</div>
+                        <div class="period">Last 7 days</div>
+                    </div>
+                </div>
             </div>
-            <div class="stat-card">
-                <div class="value">33</div>
-                <div class="label">Followers</div>
-            </div>
-            <div class="stat-card">
-                <div class="value">30</div>
-                <div class="label">Following</div>
-            </div>
-            <div class="stat-card">
-                <div class="value">~85</div>
-                <div class="label">Total Likes</div>
-            </div>
-        </div>
 
-        <!-- Content Section -->
-        <div class="section-header">
-            <div>
-                <h2 class="section-title">Content</h2>
-                <p class="section-subtitle">All posts from @saka.yiumo</p>
+            <!-- Posts Page -->
+            <div class="page active" id="page-posts">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Your Posts</h2>
+                        <p class="section-subtitle">All content from your Instagram</p>
+                    </div>
+                    <div class="last-updated">
+                        <span class="dot"></span>
+                        Updated: <span id="last-update-time">--</span>
+                    </div>
+                </div>
+                <div class="posts-grid" id="posts-container"></div>
             </div>
-            <span class="section-subtitle">Updated: Mar 11, 2026</span>
-        </div>
 
-        <div class="posts-grid" id="posts-container"></div>
-    </div>
+            <!-- Followers Page -->
+            <div class="page" id="page-followers">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Followers</h2>
+                        <p class="section-subtitle">People who follow you</p>
+                    </div>
+                </div>
+                <div class="users-grid" id="followers-container"></div>
+            </div>
 
-    <!-- Modal -->
-    <div class="modal" id="modal">
-        <span class="modal-close" onclick="closeModal()">&times;</span>
-        <img src="" alt="" id="modal-img">
+            <!-- Following Page -->
+            <div class="page" id="page-following">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Following</h2>
+                        <p class="section-subtitle">People you follow</p>
+                    </div>
+                </div>
+                <div class="users-grid" id="following-container"></div>
+            </div>
+
+            <!-- Inspiration Page -->
+            <div class="page" id="page-inspiration">
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">Inspiration</h2>
+                        <p class="section-subtitle">Latest posts from creators you follow</p>
+                    </div>
+                </div>
+                <div class="inspiration-feed" id="inspiration-container"></div>
+            </div>
+        </main>
     </div>
 
     <script>
+        // Data
         const posts = [
-            { image: "images/thumb_01.jpg", caption: "You can count to ❤️❤️❤️", likes: 24, comments: 1, type: "Reel", pinned: true },
-            { image: "images/thumb_02.jpg", caption: "Love you 3000", likes: 8, comments: 0, type: "Reel" },
-            { image: "images/thumb_03.jpg", caption: "Take his bxll", likes: 14, comments: 0, type: "Reel" },
-            { image: "images/thumb_04.jpg", caption: "I think I'm right🥱🥱", likes: 5, comments: 0, type: "Reel" },
-            { image: "images/thumb_05.jpg", caption: "Have you see my… ❤️ #dancing", likes: 5, comments: 0, type: "Reel" },
-            { image: "images/thumb_06.jpg", caption: "Jin Jin 🤪🤪", likes: 3, comments: 0, type: "Reel" },
-            { image: "images/thumb_07.jpg", caption: "feeling myself 💅✨ #dance #fyp #vibes", likes: 3, comments: 0, type: "Reel" },
-            { image: "images/thumb_08.jpg", caption: "vibes only ✨💃 #dance #fyp #vibes", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_09.jpg", caption: "gotta move my body 💃✨ #dance #fyp #vibes", likes: 3, comments: 0, type: "Reel" },
-            { image: "images/thumb_10.jpg", caption: "Feeling the beat tonight, dancing like nobody's watching! 재미있게 춰봤어 💃✨", likes: 2, comments: 0, type: "Reel" },
-            { image: "images/thumb_11.jpg", caption: "Feeling the beat tonight, just letting loose in my room 💃 Who's joining the dance?", likes: 2, comments: 0, type: "Reel" },
-            { image: "images/thumb_12.jpg", caption: "Dancing my heart out tonight, feeling that 재미 (fun) vibe! 💃✨", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_13.jpg", caption: "Feeling the beat and just letting loose tonight! 💃 Who's dancing with me?", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_14.jpg", caption: "Feeling the rhythm tonight, just dancing my heart out in my room. Who's joining? 💃", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_15.jpg", caption: "Feeling the beat and letting loose tonight! 💃 Who's joining me?", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_16.jpg", caption: "can't stop won't stop 💃 #dance #kpop", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_17.jpg", caption: "just had to 💃 #dance #fyp", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_18.jpg", caption: "main character moment 🎬 #aesthetic #viral #fyp", likes: 2, comments: 0, type: "Reel" },
-            { image: "images/thumb_19.jpg", caption: "오늘 메이크업 💄 soft girl era ✨ #makeup #kbeauty", likes: 2, comments: 0, type: "Reel" },
-            { image: "images/thumb_20.jpg", caption: "Though this was trend? Isn't it 👀", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_21.jpg", caption: "오늘 춤 연습 영상! 피곤하지만 재미있었어~ 💃 #댄스 #춤추기", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_22.jpg", caption: "Feeling the rhythm tonight, just letting loose in my latest dance vid! 💃", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_23.jpg", caption: "Oh baby why don't you … ❤️❤️", likes: 2, comments: 0, type: "Reel" },
-            { image: "images/thumb_24.jpg", caption: "Ohhhhh omg so embarrassing and olddddd school 😶‍🌫️", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_25.jpg", caption: "Dance practice 💃", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_26.jpg", caption: "New moves 🔥", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_27.jpg", caption: "Weekend vibes ✨", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_28.jpg", caption: "Just dancing 💃", likes: 1, comments: 0, type: "Reel" },
-            { image: "images/thumb_29.jpg", caption: "Good day 🌸", likes: 1, comments: 0, type: "Reel" }
+            { id: "DVkOW71EcXA", image: "images/thumb_01.jpg", caption: "You can count to ❤️❤️❤️", likes: 24, comments: 1, views: 245, type: "Reel", pinned: true },
+            { id: "DVwZ72ikgFc", image: "images/thumb_02.jpg", caption: "Love you 3000", likes: 8, comments: 0, views: 89, type: "Reel" },
+            { id: "DVvDWSwESI2", image: "images/thumb_03.jpg", caption: "Take his bxll", likes: 14, comments: 0, views: 156, type: "Reel" },
+            { id: "DVvDSiFkdJc", image: "images/thumb_04.jpg", caption: "I think I'm right🥱🥱", likes: 5, comments: 0, views: 67, type: "Reel" },
+            { id: "DVvBoEAETYn", image: "images/thumb_05.jpg", caption: "Have you see my… ❤️ #dancing", likes: 5, comments: 0, views: 58, type: "Reel" },
+            { id: "DVu-Q9DkWIn", image: "images/thumb_06.jpg", caption: "Jin Jin 🤪🤪", likes: 3, comments: 0, views: 42, type: "Reel" },
+            { id: "DVuLRWRidyg", image: "images/thumb_07.jpg", caption: "feeling myself 💅✨ #dance #fyp #vibes", likes: 3, comments: 0, views: 38, type: "Reel" },
+            { id: "DVuKDLzk7LX", image: "images/thumb_08.jpg", caption: "vibes only ✨💃 #dance #fyp #vibes", likes: 1, comments: 0, views: 29, type: "Reel" },
+            { id: "DVuJaREiMtR", image: "images/thumb_09.jpg", caption: "gotta move my body 💃✨ #dance #fyp #vibes", likes: 3, comments: 0, views: 35, type: "Reel" },
+            { id: "DVuG8dHjput", image: "images/thumb_10.jpg", caption: "Feeling the beat tonight, dancing like nobody's watching! 재미있게 춰봤어 💃✨", likes: 2, comments: 0, views: 31, type: "Reel" },
+            { id: "DVsZ7qaEbyV", image: "images/thumb_11.jpg", caption: "Feeling the beat tonight, just letting loose in my room 💃", likes: 2, comments: 0, views: 28, type: "Reel" },
+            { id: "DVsZ4LgEWSj", image: "images/thumb_12.jpg", caption: "Dancing my heart out tonight, feeling that 재미 (fun) vibe! 💃✨", likes: 1, comments: 0, views: 25, type: "Reel" },
+            { id: "DVsZ1CzkXGI", image: "images/thumb_13.jpg", caption: "Feeling the beat and just letting loose tonight! 💃", likes: 1, comments: 0, views: 22, type: "Reel" },
+            { id: "DVsZxXjEef4", image: "images/thumb_14.jpg", caption: "Feeling the rhythm tonight, just dancing my heart out 💃", likes: 1, comments: 0, views: 21, type: "Reel" },
+            { id: "DVsZsqAEQIR", image: "images/thumb_15.jpg", caption: "Feeling the beat and letting loose tonight! 💃", likes: 1, comments: 0, views: 20, type: "Reel" },
+            { id: "DVsVdF7D_ek", image: "images/thumb_16.jpg", caption: "can't stop won't stop 💃 #dance #kpop", likes: 1, comments: 0, views: 19, type: "Reel" },
+            { id: "DVsOOCtDfMX", image: "images/thumb_17.jpg", caption: "just had to 💃 #dance #fyp", likes: 1, comments: 0, views: 18, type: "Reel" },
+            { id: "DVsB1cljpgS", image: "images/thumb_18.jpg", caption: "main character moment 🎬 #aesthetic #viral #fyp", likes: 2, comments: 0, views: 24, type: "Reel" },
+            { id: "DVr7eE9EXeZ", image: "images/thumb_19.jpg", caption: "오늘 메이크업 💄 soft girl era ✨ #makeup #kbeauty", likes: 2, comments: 0, views: 26, type: "Reel" },
+            { id: "DVkOKRMESG0", image: "images/thumb_20.jpg", caption: "Though this was trend? Isn't it 👀", likes: 1, comments: 0, views: 17, type: "Reel" },
+            { id: "DVkOHMdET2P", image: "images/thumb_21.jpg", caption: "오늘 춤 연습 영상! 피곤하지만 재미있었어~ 💃", likes: 1, comments: 0, views: 16, type: "Reel" },
+            { id: "DVkN7yWkb8F", image: "images/thumb_22.jpg", caption: "Feeling the rhythm tonight, just letting loose 💃", likes: 1, comments: 0, views: 15, type: "Reel" },
+            { id: "DVkN3oikdMP", image: "images/thumb_23.jpg", caption: "Oh baby why don't you … ❤️❤️", likes: 2, comments: 0, views: 23, type: "Reel" },
+            { id: "DVhccFoDxIT", image: "images/thumb_24.jpg", caption: "Ohhhhh omg so embarrassing and olddddd school 😶‍🌫️", likes: 1, comments: 0, views: 14, type: "Reel" },
+            { id: "post25", image: "images/thumb_25.jpg", caption: "Dance practice 💃", likes: 1, comments: 0, views: 13, type: "Reel" },
+            { id: "post26", image: "images/thumb_26.jpg", caption: "New moves 🔥", likes: 1, comments: 0, views: 12, type: "Reel" },
+            { id: "post27", image: "images/thumb_27.jpg", caption: "Weekend vibes ✨", likes: 1, comments: 0, views: 11, type: "Reel" },
+            { id: "post28", image: "images/thumb_28.jpg", caption: "Just dancing 💃", likes: 1, comments: 0, views: 10, type: "Reel" },
+            { id: "post29", image: "images/thumb_29.jpg", caption: "Good day 🌸", likes: 1, comments: 0, views: 9, type: "Reel" }
         ];
 
+        // Sample following/followers data
+        const following = [
+            { username: "jennie", name: "J", avatar: "https://i.pravatar.cc/100?img=1" },
+            { username: "lisa", name: "Lalisa", avatar: "https://i.pravatar.cc/100?img=2" },
+            { username: "rose_are_rosie", name: "ROSÉ", avatar: "https://i.pravatar.cc/100?img=3" },
+            { username: "jisoo", name: "Jisoo", avatar: "https://i.pravatar.cc/100?img=4" },
+            { username: "itzy_official", name: "ITZY", avatar: "https://i.pravatar.cc/100?img=5" },
+            { username: "aespa_official", name: "aespa", avatar: "https://i.pravatar.cc/100?img=6" },
+        ];
+
+        const followers = [
+            { username: "dance_lover_01", name: "Dance Lover", avatar: "https://i.pravatar.cc/100?img=10" },
+            { username: "kpop_fan_22", name: "K-Pop Fan", avatar: "https://i.pravatar.cc/100?img=11" },
+            { username: "seoul_vibes", name: "Seoul Vibes", avatar: "https://i.pravatar.cc/100?img=12" },
+        ];
+
+        // Sample inspiration feed
+        const inspirationPosts = [
+            { username: "jennie", name: "J", avatar: "https://i.pravatar.cc/100?img=1", image: "https://picsum.photos/400/700?random=1", caption: "New day new energy ✨", time: "2h ago", id: "abc123" },
+            { username: "lisa", name: "Lalisa", avatar: "https://i.pravatar.cc/100?img=2", image: "https://picsum.photos/400/700?random=2", caption: "Dance practice 💃🔥", time: "4h ago", id: "def456" },
+            { username: "rose_are_rosie", name: "ROSÉ", avatar: "https://i.pravatar.cc/100?img=3", image: "https://picsum.photos/400/700?random=3", caption: "On my way 🎵", time: "6h ago", id: "ghi789" },
+            { username: "itzy_official", name: "ITZY", avatar: "https://i.pravatar.cc/100?img=5", image: "https://picsum.photos/400/700?random=4", caption: "MIDZY we love you! 💕", time: "8h ago", id: "jkl012" },
+        ];
+
+        // Render functions
         function formatNumber(num) {
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
             if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
             return num.toString();
         }
 
+        function getInstagramUrl(postId) {
+            return `https://www.instagram.com/reel/${postId}/`;
+        }
+
         function renderPosts() {
             const container = document.getElementById('posts-container');
             container.innerHTML = posts.map(post => `
-                <div class="post-card">
-                    <img src="${post.image}" alt="Post" class="thumbnail" onclick="openModal('${post.image}')" onerror="this.style.background='#222'">
+                <div class="post-card" onclick="window.open('${getInstagramUrl(post.id)}', '_blank')">
+                    <img src="${post.image}" alt="Post" class="thumbnail" onerror="this.style.background='#222'">
                     <div class="info">
-                        <span class="type-badge">${post.type}${post.pinned ? ' • Pinned' : ''}</span>
-                        <div class="engagement">
-                            <span>❤️ ${formatNumber(post.likes)}</span>
-                            <span>💬 ${formatNumber(post.comments)}</span>
+                        <span class="type-badge">${post.type}${post.pinned ? ' • 📌 Pinned' : ''}</span>
+                        <div class="metrics">
+                            <span class="metric">❤️ ${formatNumber(post.likes)}</span>
+                            <span class="metric">💬 ${formatNumber(post.comments)}</span>
+                            <span class="metric">👁️ ${formatNumber(post.views)}</span>
                         </div>
                         <p class="caption">${post.caption}</p>
+                        <span class="external-link">↗ Open in Instagram</span>
                     </div>
                 </div>
             `).join('');
         }
 
-        function openModal(src) {
-            document.getElementById('modal-img').src = src;
-            document.getElementById('modal').classList.add('active');
+        function renderUsers(users, containerId, baseUrl = 'https://www.instagram.com/') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = users.map(user => `
+                <div class="user-card" onclick="window.open('${baseUrl}${user.username}/', '_blank')">
+                    <img src="${user.avatar}" alt="${user.name}" class="avatar">
+                    <div>
+                        <div class="name">${user.name}</div>
+                        <div class="handle">@${user.username}</div>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        function closeModal() {
-            document.getElementById('modal').classList.remove('active');
+        function renderInspiration() {
+            const container = document.getElementById('inspiration-container');
+            container.innerHTML = inspirationPosts.map(post => `
+                <div class="inspiration-card" onclick="window.open('https://www.instagram.com/p/${post.id}/', '_blank')">
+                    <div class="header">
+                        <img src="${post.avatar}" alt="${post.name}" class="avatar">
+                        <div>
+                            <div class="name">@${post.username}</div>
+                        </div>
+                        <span class="time">${post.time}</span>
+                    </div>
+                    <img src="${post.image}" alt="Post" class="thumbnail">
+                    <p class="caption">${post.caption}</p>
+                </div>
+            `).join('');
         }
 
-        document.getElementById('modal').addEventListener('click', (e) => {
-            if (e.target.id === 'modal') closeModal();
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+
+                // Update nav
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+
+                // Update page
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(`page-${page}`).classList.add('active');
+            });
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
-        });
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('last-update-time').textContent =
+                now.toLocaleString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+        }
 
+        // Auto-refresh every hour
+        setInterval(() => {
+            updateTime();
+            // In production, fetch new data here
+            console.log('Data refreshed at', new Date().toISOString());
+        }, 3600000); // 1 hour
+
+        // Initial render
         renderPosts();
+        renderUsers(followers, 'followers-container');
+        renderUsers(following, 'following-container');
+        renderInspiration();
+        updateTime();
     </script>
 </body>
 </html>
