@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yiumo Creator Studio</title>
+    <title>Yiumo Creator Dashboard</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -12,7 +12,7 @@
             min-height: 100vh;
             color: #fff;
         }
-        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
 
         /* Header */
         .header {
@@ -31,12 +31,24 @@
             border-radius: 50%;
             border: 3px solid #ff6b9d;
             object-fit: cover;
+            background: #222;
         }
-        .profile-info h1 { font-size: 28px; font-weight: 600; margin-bottom: 4px; }
-        .profile-info .username { color: #888; font-size: 16px; margin-bottom: 8px; }
-        .profile-info .bio { color: #aaa; font-size: 14px; }
+        .profile-info h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .profile-info .username {
+            color: #888;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+        .profile-info .bio {
+            color: #aaa;
+            font-size: 14px;
+        }
 
-        /* Stats */
+        /* Stats Row */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -51,9 +63,22 @@
             text-align: center;
             transition: transform 0.2s, border-color 0.2s;
         }
-        .stat-card:hover { transform: translateY(-2px); border-color: #ff6b9d; }
-        .stat-card .value { font-size: 36px; font-weight: 700; margin-bottom: 4px; }
-        .stat-card .label { font-size: 13px; color: #666; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: #ff6b9d;
+        }
+        .stat-card .value {
+            font-size: 36px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+        .stat-card .label {
+            font-size: 13px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
 
         /* Section */
         .section-header {
@@ -61,10 +86,81 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
-        .section-title { font-size: 20px; font-weight: 600; }
-        .section-subtitle { font-size: 13px; color: #666; }
-        .update-badge { font-size: 12px; color: #ff6b9d; }
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+        }
+        .section-subtitle {
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: #ff6b9d;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .refresh-btn:hover { background: #ff4d8a; }
+        .refresh-btn:active { transform: scale(0.98); }
+        .refresh-btn:disabled { background: #444; cursor: not-allowed; }
+        .refresh-btn .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Loading State */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(10, 10, 10, 0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .loading-overlay.active { display: flex; }
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #222;
+            border-top-color: #ff6b9d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        .loading-text { color: #888; font-size: 14px; }
+
+        /* Error State */
+        .error-banner {
+            display: none;
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            padding: 16px 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .error-banner.active { display: block; }
 
         /* Posts Grid */
         .posts-grid {
@@ -77,9 +173,12 @@
             border: 1px solid #222;
             border-radius: 16px;
             overflow: hidden;
-            transition: transform 0.2s;
+            transition: transform 0.2s, border-color 0.2s;
         }
-        .post-card:hover { transform: translateY(-4px); border-color: #333; }
+        .post-card:hover {
+            transform: translateY(-4px);
+            border-color: #333;
+        }
         .post-card .thumbnail {
             width: 100%;
             aspect-ratio: 1;
@@ -87,7 +186,9 @@
             cursor: pointer;
             background: #1a1a1a;
         }
-        .post-card .info { padding: 16px; }
+        .post-card .info {
+            padding: 16px;
+        }
         .post-card .engagement {
             display: flex;
             gap: 16px;
@@ -119,6 +220,17 @@
             margin-bottom: 8px;
         }
 
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #1a1a1a 25%, #222 50%, #1a1a1a 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+        }
+        @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+        .skeleton-avatar { width: 120px; height: 120px; border-radius: 50%; }
+        .skeleton-text { height: 20px; border-radius: 4px; margin-bottom: 8px; }
+        .skeleton-card { aspect-ratio: 1; border-radius: 16px; }
+
         /* Modal */
         .modal {
             display: none;
@@ -138,13 +250,15 @@
             color: #fff;
             cursor: pointer;
             opacity: 0.7;
+            transition: opacity 0.2s;
         }
         .modal-close:hover { opacity: 1; }
 
+        /* Responsive */
         @media (max-width: 768px) {
             .container { padding: 16px; }
             .header { flex-direction: column; text-align: center; padding: 24px; }
-            .avatar { width: 100px; height: 100px; }
+            .avatar, .skeleton-avatar { width: 100px; height: 100px; }
             .stats-row { grid-template-columns: repeat(2, 1fr); gap: 12px; }
             .stat-card { padding: 16px; }
             .stat-card .value { font-size: 28px; }
@@ -153,53 +267,79 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loading">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Loading data from Instagram...</div>
+    </div>
+
     <div class="container">
-        <header class="header">
-            <img src="images/profile.jpg" alt="Yiumo" class="avatar">
+        <!-- Error Banner -->
+        <div class="error-banner" id="error-banner"></div>
+
+        <!-- Header -->
+        <header class="header" id="header">
+            <img src="images/profile.jpg" alt="Profile" class="avatar" id="avatar">
             <div class="profile-info">
-                <h1>Yiumo</h1>
-                <p class="username">@saka.yiumo</p>
-                <p class="bio">20 y 🇰🇷</p>
+                <h1 id="fullName">Loading...</h1>
+                <p class="username" id="username">@...</p>
+                <p class="bio" id="bio"></p>
             </div>
         </header>
 
-        <div class="stats-row">
+        <!-- Stats -->
+        <div class="stats-row" id="stats-row">
             <div class="stat-card">
-                <div class="value">32</div>
+                <div class="value" id="stat-posts">-</div>
                 <div class="label">Posts</div>
             </div>
             <div class="stat-card">
-                <div class="value">33</div>
+                <div class="value" id="stat-followers">-</div>
                 <div class="label">Followers</div>
             </div>
             <div class="stat-card">
-                <div class="value">30</div>
+                <div class="value" id="stat-following">-</div>
                 <div class="label">Following</div>
             </div>
             <div class="stat-card">
-                <div class="value">153</div>
+                <div class="value" id="stat-likes">-</div>
                 <div class="label">Total Likes</div>
             </div>
         </div>
 
+        <!-- Content Section -->
         <div class="section-header">
             <div>
                 <h2 class="section-title">Content</h2>
-                <p class="section-subtitle">All posts from @saka.yiumo</p>
+                <p class="section-subtitle" id="update-time">Click refresh to load data</p>
             </div>
-            <span class="update-badge">🔄 Auto-updated: Mar 11, 2026</span>
+            <button class="refresh-btn" id="refresh-btn" onclick="loadData()">
+                <span id="refresh-icon">↻</span> Refresh
+            </button>
         </div>
 
         <div class="posts-grid" id="posts-container"></div>
     </div>
 
+    <!-- Modal -->
     <div class="modal" id="modal">
         <span class="modal-close" onclick="closeModal()">&times;</span>
         <img src="" alt="" id="modal-img">
     </div>
 
     <script>
-        const posts = [{"image":"images/thumb_01.jpg","caption":"You can count to ❤️❤️❤️","likes":24,"comments":1,"type":"Reel","pinned":true,"url":"https://www.instagram.com/reel/DVkOW71EcXA/"},{"image":"images/thumb_02.jpg","caption":"soft moments ✨\n\n#aesthetic #softgirl #koreanstyle #viral #fyp #reels #trending #ethereal #dreamy #vi","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVw8vlXgv1l/"},{"image":"images/thumb_03.jpg","caption":"amber eyes hit different 👀✨ #koreanbeauty #contactlens #fyp","likes":1,"comments":1,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVwtPwSFAeZ/"},{"image":"images/thumb_04.jpg","caption":"Love you 3000","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVwZ72ikgFc/"},{"image":"images/thumb_05.jpg","caption":"Take his bxll","likes":17,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVvDWSwESI2/"},{"image":"images/thumb_06.jpg","caption":"I think I’m right🥱🥱","likes":7,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVvDSiFkdJc/"},{"image":"images/thumb_07.jpg","caption":"Have you see my… ❤️ #dancing","likes":5,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVvBoEAETYn/"},{"image":"images/thumb_08.jpg","caption":"Jin Jin 🤪🤪","likes":4,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVu-Q9DkWIn/"},{"image":"images/thumb_09.jpg","caption":"feeling myself 💅✨ #dance #fyp #vibes","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVuLRWRidyg/"},{"image":"images/thumb_10.jpg","caption":"vibes only ✨💃 #dance #fyp #vibes","likes":1,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVuKDLzk7LX/"},{"image":"images/thumb_11.jpg","caption":"gotta move my body 💃✨ #dance #fyp #vibes","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVuJaREiMtR/"},{"image":"images/thumb_12.jpg","caption":"Feeling the beat tonight, dancing like nobody's watching! 재미있게 춰봤어 💃✨ #DanceVibes #KPopMoves #SakaD","likes":2,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVuG8dHjput/"},{"image":"images/thumb_13.jpg","caption":"Feeling the beat tonight, just letting loose in my room 💃 Who’s joining the dance? #DanceVibes #Kpo","likes":18,"comments":1,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsZ7qaEbyV/"},{"image":"images/thumb_14.jpg","caption":"Dancing my heart out tonight, feeling that 재미 (fun) vibe! 💃✨ #DanceVibes #KpopMoves #OnlyfansTease","likes":1,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsZ4LgEWSj/"},{"image":"images/thumb_15.jpg","caption":"Feeling the beat and just letting loose tonight! 💃 Who’s dancing with me? #DanceVibes #KPopMoves #O","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsZ1CzkXGI/"},{"image":"images/thumb_16.jpg","caption":"Feeling the rhythm tonight, just dancing my heart out in my room. Who’s joining? 💃 #DanceVibes #KPo","likes":4,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsZxXjEef4/"},{"image":"images/thumb_17.jpg","caption":"Feeling the beat and letting loose tonight! 💃 Who’s joining me?\n#DanceVibes #KoreanGirl #OnlyFansFu","likes":8,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsZsqAEQIR/"},{"image":"images/thumb_18.jpg","caption":"can't stop won't stop 💃 #dance #kpop","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsVdF7D_ek/"},{"image":"images/thumb_19.jpg","caption":"just had to 💃 #dance #fyp","likes":8,"comments":1,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsOOCtDfMX/"},{"image":"images/thumb_20.jpg","caption":"main character moment 🎬 #aesthetic #viral #fyp","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVsB1cljpgS/"},{"image":"images/thumb_21.jpg","caption":"오늘 메이크업 💄 soft girl era ✨ #makeup #kbeauty #softmakeup #glowyskin #koreanmakeup","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVr7eE9EXeZ/"},{"image":"images/thumb_22.jpg","caption":"Though this was trend? Isn’t it 👀","likes":6,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVkOKRMESG0/"},{"image":"images/thumb_23.jpg","caption":"오늘 춤 연습 영상! 피곤하지만 재미있었어~ 💃\n#댄스 #춤추기 #onlyfans","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVkOHMdET2P/"},{"image":"images/thumb_24.jpg","caption":"Feeling the rhythm tonight, just letting loose in my latest dance vid! Who’s joining me? 💃 #DanceVi","likes":7,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVkN7yWkb8F/"},{"image":"images/thumb_25.jpg","caption":"Oh baby why don’t you … ❤️❤️","likes":3,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVkN3oikdMP/"},{"image":"images/thumb_26.jpg","caption":"Ohhhhh omg so embarrassing and olddddd school 😶‍🌫️😶‍🌫️😶‍🌫️","likes":1,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVhccFoDxIT/"},{"image":"images/thumb_27.jpg","caption":"❤️❤️❤️🤩","likes":2,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVfzGvEEe0S/"},{"image":"images/thumb_28.jpg","caption":"Ooops❤️","likes":1,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVfzA2zka1E/"},{"image":"images/thumb_29.jpg","caption":"Every speak is true ❤️❤️💦💦","likes":0,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVfumWckW2U/"},{"image":"images/thumb_30.jpg","caption":"오늘 하루도 웃으면서 마무리하세요! 여러분의 미소가 가장 예뻐요 ✨💖","likes":1,"comments":0,"type":"Reel","pinned":false,"url":"https://www.instagram.com/reel/DVfuRo1kZt-/"},{"image":"images/thumb_31.jpg","caption":"New post ❤️","likes":2,"comments":0,"type":"Post","pinned":false,"url":"https://www.instagram.com/reel/DUDG3PRlauc/"},{"image":"images/thumb_32.jpg","caption":"","likes":3,"comments":0,"type":"Post","pinned":false,"url":"https://www.instagram.com/reel/DT9v9TzFOA1/"}];
+        // Configuration
+        const CONFIG = {
+            username: 'saka.yiumo',
+            // API endpoint - change this to your deployed API URL
+            apiUrl: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3456'
+                : 'https://saka-api.your-domain.workers.dev', // Replace with your Cloudflare Worker URL
+            cacheKey: 'saka_dashboard_cache',
+            cacheDuration: 5 * 60 * 1000 // 5 minutes
+        };
+
+        let isLoading = false;
 
         function formatNumber(num) {
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
@@ -207,23 +347,141 @@
             return num.toString();
         }
 
-        function renderPosts() {
-            document.getElementById('posts-container').innerHTML = posts.map(post => `
+        function showLoading(show) {
+            document.getElementById('loading').classList.toggle('active', show);
+            const btn = document.getElementById('refresh-btn');
+            btn.disabled = show;
+            document.getElementById('refresh-icon').innerHTML = show
+                ? '<div class="spinner"></div>'
+                : '↻';
+        }
+
+        function showError(message) {
+            const banner = document.getElementById('error-banner');
+            banner.textContent = message;
+            banner.classList.add('active');
+        }
+
+        function hideError() {
+            document.getElementById('error-banner').classList.remove('active');
+        }
+
+        function updateProfile(profile) {
+            document.getElementById('fullName').textContent = profile.fullName || profile.username;
+            document.getElementById('username').textContent = '@' + profile.username;
+            document.getElementById('bio').textContent = profile.bio || '';
+            if (profile.profilePic) {
+                document.getElementById('avatar').src = profile.profilePic;
+            }
+            document.getElementById('stat-posts').textContent = formatNumber(profile.postsCount);
+            document.getElementById('stat-followers').textContent = formatNumber(profile.followers);
+            document.getElementById('stat-following').textContent = formatNumber(profile.following);
+        }
+
+        function renderPosts(posts) {
+            const container = document.getElementById('posts-container');
+
+            // Calculate total likes
+            const totalLikes = posts.reduce((sum, p) => sum + (p.likes || 0), 0);
+            document.getElementById('stat-likes').textContent = formatNumber(totalLikes);
+
+            container.innerHTML = posts.map(post => `
                 <div class="post-card">
-                    <img src="${post.image}" alt="Post" class="thumbnail" onclick="openModal('${post.image}')" onerror="this.style.background='#222'">
+                    <img src="${post.thumbnail || 'images/placeholder.jpg'}"
+                         alt="Post"
+                         class="thumbnail"
+                         onclick="openModal('${post.thumbnail}')"
+                         onerror="this.style.background='#222'; this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect fill=%22%23222%22 width=%22100%22 height=%22100%22/><text x=%2250%22 y=%2250%22 text-anchor=%22middle%22 fill=%22%23444%22 dy=%22.3em%22>No Image</text></svg>'">
                     <div class="info">
-                        <span class="type-badge">${post.type}${post.pinned ? ' • Pinned' : ''}</span>
+                        <span class="type-badge">${post.type || 'Post'}</span>
                         <div class="engagement">
-                            <span>❤️ ${formatNumber(post.likes)}</span>
-                            <span>💬 ${formatNumber(post.comments)}</span>
+                            <span>❤️ ${formatNumber(post.likes || 0)}</span>
+                            <span>💬 ${formatNumber(post.comments || 0)}</span>
                         </div>
-                        <p class="caption">${post.caption}</p>
+                        <p class="caption">${post.caption || ''}</p>
                     </div>
                 </div>
             `).join('');
         }
 
+        function getCachedData() {
+            try {
+                const cached = localStorage.getItem(CONFIG.cacheKey);
+                if (!cached) return null;
+                const { data, timestamp } = JSON.parse(cached);
+                if (Date.now() - timestamp > CONFIG.cacheDuration) return null;
+                return data;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function setCachedData(data) {
+            try {
+                localStorage.setItem(CONFIG.cacheKey, JSON.stringify({
+                    data,
+                    timestamp: Date.now()
+                }));
+            } catch (e) {}
+        }
+
+        async function loadData(forceRefresh = true) {
+            if (isLoading) return;
+
+            hideError();
+
+            // Try cache first (only on initial load)
+            if (!forceRefresh) {
+                const cached = getCachedData();
+                if (cached) {
+                    updateProfile(cached.profile);
+                    renderPosts(cached.posts);
+                    document.getElementById('update-time').textContent =
+                        `Cached: ${new Date(cached.timestamp).toLocaleString()}`;
+                    return;
+                }
+            }
+
+            isLoading = true;
+            showLoading(true);
+
+            try {
+                const response = await fetch(`${CONFIG.apiUrl}/api/user?username=${CONFIG.username}`);
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.error || 'API request failed');
+                }
+
+                const { profile, posts } = result.data;
+
+                updateProfile(profile);
+                renderPosts(posts);
+                setCachedData({ profile, posts, timestamp: result.timestamp });
+
+                document.getElementById('update-time').textContent =
+                    `Updated: ${new Date(result.timestamp).toLocaleString()}`;
+
+            } catch (error) {
+                console.error('Failed to load data:', error);
+                showError(`Failed to load data: ${error.message}. Make sure the API server is running.`);
+
+                // Try to show cached data as fallback
+                const cached = getCachedData();
+                if (cached) {
+                    updateProfile(cached.profile);
+                    renderPosts(cached.posts);
+                    document.getElementById('update-time').textContent =
+                        `Showing cached data from ${new Date(cached.timestamp).toLocaleString()}`;
+                }
+            } finally {
+                isLoading = false;
+                showLoading(false);
+            }
+        }
+
         function openModal(src) {
+            if (!src) return;
             document.getElementById('modal-img').src = src;
             document.getElementById('modal').classList.add('active');
         }
@@ -232,15 +490,16 @@
             document.getElementById('modal').classList.remove('active');
         }
 
-        document.getElementById('modal').addEventListener('click', e => {
+        document.getElementById('modal').addEventListener('click', (e) => {
             if (e.target.id === 'modal') closeModal();
         });
 
-        document.addEventListener('keydown', e => {
+        document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
         });
 
-        renderPosts();
+        // Load data on page load (try cache first)
+        loadData(false);
     </script>
 </body>
 </html>
